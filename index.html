@@ -70,6 +70,7 @@
   border:0 !important;
 }
 .progress{background-color:#E3E6E1 !important;}
+.fixed-badge{display:inline-flex;align-items:center;font-size:10px;background:#e5eee7;color:#426b50;border:1px solid #c5d9c9;border-radius:99px;padding:3px 7px;margin-left:4px;white-space:nowrap}.fixed-task{border-color:#b7cdbb;box-shadow:inset 3px 0 0 #8fae98}.fixed-task .actions button[onclick^="toggleTaskFix"]{background:#e5eee7;color:#426b50}
 </style>
 <style>/* 상단 브리핑 요약 영역을 중앙에 모으고 각 항목도 가운데 정렬 */
 .hero .grid{width:100%;max-width:1058px;margin:16px auto 0;justify-content:center;grid-template-columns:repeat(4,minmax(0,1fr)}
@@ -403,7 +404,8 @@ function undoComplete(id){
   save();render();renderStats();toast("아가씨, 완료 표시를 취소하고 이전 실적과 기록을 복원했습니다.");
 }
 function resetProgress(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.current=0;t.done=false;t.lastProgressDate=today();history=history.filter(h=>!(h.taskId===id&&h.date===today()));save();render();toast("아가씨, 진행 상태를 초기화했습니다.")}
-function delTask(id){const task=tasks.find(x=>x.id===id);if(!task)return;const message=`“${task.name}” 작업을 오늘의 대시보드에서 삭제할까요?\n\n반복 작업이라면 앞으로의 일정에서도 제외됩니다. 기존 완료 기록과 통계는 보존됩니다.\n\n삭제를 진행하려면 확인을 눌러주세요.`;if(!confirm(message))return;tasks=tasks.filter(x=>x.id!==id);save();render();toast("아가씨, 대시보드에서 작업을 삭제했습니다. 과거 기록은 그대로 보관됩니다.")}
+function toggleTaskFix(id){const task=tasks.find(x=>String(x.id)===String(id));if(!task)return;if(task.fixed){if(!confirm(`아가씨, “${task.name}”의 픽스 잠금을 해제할까요?\n\n잠금을 해제해도 업무 기록은 삭제되지 않습니다.`))return;task.fixed=false;save();render();toast("아가씨, 업무 픽스 잠금을 해제했습니다.");return;}if(!confirm(`아가씨, “${task.name}”을(를) 픽스할까요?\n\n픽스한 업무는 실수로 삭제하지 않도록 강력한 확인 절차가 적용됩니다. 업무 진행과 정보 수정은 계속 가능합니다.`))return;task.fixed=true;save();render();toast("아가씨, 중요한 업무를 픽스해 안전하게 보호했습니다.")}
+function delTask(id){const task=tasks.find(x=>String(x.id)===String(id));if(!task)return;if(task.fixed){if(!confirm(`🔒 픽스된 중요 업무입니다.\n\n“${task.name}”을(를) 정말 삭제하시겠습니까?\n이 작업은 오래 진행 중인 업무일 수 있습니다. 삭제하면 대시보드에서 사라집니다.`))return;const typed=prompt(`안전 확인을 위해 업무 이름을 정확히 입력해 주세요.\n\n${task.name}`);if(typed!==task.name){toast("아가씨, 업무 이름이 일치하지 않아 삭제를 취소했습니다.");return;}if(!confirm(`마지막 확인입니다.\n\n“${task.name}”을(를) 영구적으로 대시보드에서 삭제할까요?`))return;}else{const message=`“${task.name}” 작업을 오늘의 대시보드에서 삭제할까요?\n\n반복 작업이라면 앞으로의 일정에서도 제외됩니다. 기존 완료 기록과 통계는 보존됩니다.\n\n삭제를 진행하려면 확인을 눌러주세요.`;if(!confirm(message))return;}tasks=tasks.filter(x=>String(x.id)!==String(id));save();render();toast("아가씨, 대시보드에서 작업을 삭제했습니다. 과거 기록은 그대로 보관됩니다.")}
 function deadlineCountdown(t){
   const d=deadlineInfo(t);
   let label,cls;
@@ -592,11 +594,11 @@ function render(){
     const inputHint=t.repeat==="weekly"?(u==="시간"?'오늘 실적 · 분 입력':'오늘 실적 입력'):(u==="시간"?'현재 실적 · 분 입력 (예: 20분 → 20)':'현재 실적');
     const inputValue=currentBase(t);
     const input=u==="완료"?'': '<input id="cur_'+t.id+'" type="number" min="0" step="1" value="'+inputValue+'" style="max-width:125px" aria-label="'+inputHint+'" '+(t.done?'disabled':'')+'>'+(u!=="시간"?'<input id="mins_'+t.id+'" type="number" min="1" step="1" placeholder="작업 시간(분)" title="이번에 실제로 작업한 시간(분)" style="max-width:145px" aria-label="이번 작업 시간(분)" '+(t.done?'disabled':'')+'><button type="button" onclick="addWorkTime('+t.id+')" '+(t.done?'disabled':'')+'>시간 기록</button>':'');
-    return '<div class="task '+(t.done?'done':'')+'"><div class="tasktop">'+(t.done?'':'<div class="rank priority-rank priority-rank-'+(sorted.findIndex(x=>x.id===t.id)+1)+'">'+(sorted.findIndex(x=>x.id===t.id)+1)+'</div>')+'<div style="flex:1"><h3>'+esc(t.name)+' <span class="tag">'+esc(t.area)+'</span>'+(t.certRequired&&t.certified?'<span class="cert-badge">인증 완료</span>':'')+'</h3>'
+    return '<div class="task '+(t.done?'done':'')+(t.fixed?' fixed-task':'')+'"><div class="tasktop">'+(t.done?'':'<div class="rank priority-rank priority-rank-'+(sorted.findIndex(x=>x.id===t.id)+1)+'">'+(sorted.findIndex(x=>x.id===t.id)+1)+'</div>')+'<div style="flex:1"><h3>'+esc(t.name)+' <span class="tag">'+esc(t.area)+'</span>'+(t.fixed?'<span class="fixed-badge">🔒 픽스</span>':'')+(t.certRequired&&t.certified?'<span class="cert-badge">인증 완료</span>':'')+'</h3>'
     +'<div class="detail">'+(t.done?(t.repeat==="weekly"?'✓ 오늘치 목표 달성 · ':'✓ 오늘 목표 완료 · '):'')+(t.repeat==="weekly"?'주간 목표 '+esc((t.weeklyTarget||1)+ '일')+' · 달성 '+esc(String(t.weeklyCurrent||0))+'일 · 주간 달성률 '+ach+'%':'목표 '+esc(displayTarget(t))+' · 현재 '+esc(displayCurrent(t))+' · 잔여 '+esc(displayRemaining(t))+' · 달성률 '+ach+'%')+' · '+period+'</div>'
     +((isTimeUnit(t)||Number(t.estimatedMinutes)>0||t.difficulty)?'<div class="detail">'+(isTimeUnit(t)?'남은 목표 시간 '+formatDurationMinutes(estimatedRemainingMinutes(t)):(Number(t.estimatedMinutes)>0?'남은 예상 소요시간 '+formatDurationMinutes(estimatedRemainingMinutes(t)):'예상 소요시간 미입력'))+( !isTimeUnit(t)&&Number(t.actualMinutes)>0?' · 실제 누적 '+formatDurationMinutes(t.actualMinutes):'')+' · 난이도 '+({easy:'쉬움',normal:'보통',hard:'어려움'}[t.difficulty||'normal'])+'</div>':'')+deadlineCountdown(t)+'<div class="actions"><div style="width:100%;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:2px">'+inputHint+'</div>'+input
     +(u==="완료"?'<button class="primary" onclick="complete('+t.id+')" '+(t.done?'disabled':'')+'>'+(t.done?'✓ 완료됨':'완료 처리')+'</button>':'<button class="primary" onclick="updateCurrent('+t.id+')" '+(t.done?'disabled':'')+'>작업량 반영</button>')
-    +'<button onclick="'+(t.done?'undoComplete':'complete')+'('+t.id+')">'+(t.done?'↶ 완료 취소':'✓ 완료')+'</button><button onclick="editTask('+t.id+')">수정</button><button class="danger" onclick="delTask('+t.id+')">삭제</button></div>'
+    +'<button onclick="'+(t.done?'undoComplete':'complete')+'('+t.id+')">'+(t.done?'↶ 완료 취소':'✓ 완료')+'</button><button onclick="editTask('+t.id+')">수정</button><button onclick="toggleTaskFix('+t.id+')">'+(t.fixed?'🔓 픽스 해제':'📌 업무 픽스')+'</button><button class="danger" onclick="delTask('+t.id+')">삭제</button></div>'
     +'<details class="cert-menu"><summary>인증 관리 <span class="cert-status">'+(t.certRequired?(t.certified?'✓ 인증 완료':'인증 필요'):'선택 사항')+'</span></summary>'
     +'<div class="cert-options"><label><input type="checkbox" '+(t.certRequired?'checked':'')+' onchange="setCertification('+t.id+', &quot;required&quot;, this.checked)"> 인증이 필요한 작업</label>'
     +(t.certRequired?'<label><input type="checkbox" '+(t.certified?'checked':'')+' onchange="setCertification('+t.id+', &quot;done&quot;, this.checked)"> 인증 완료</label>':'')
@@ -1505,6 +1507,21 @@ h2::before, .section-title::before, .panel-title::before, .card-section-title::b
 
 /* 업무 정보 수정 팝업의 필드별 세부 안내문은 왼쪽 정렬해 읽기 쉽게 통일 */
 #editModal .edit-formgrid .hint{ text-align:left !important; }
+
+/* 업무 픽스 추가 후 PC 작업 카드의 조작부가 다음 줄로 밀리지 않도록 밀도 조정 */
+@media(min-width:681px){
+  .task .actions{gap:6px;align-items:center;}
+  .task .actions button{padding:8px 9px;font-size:13px;letter-spacing:-.45px;white-space:nowrap;flex:0 0 auto;}
+  .task .actions input{padding:8px 9px;font-size:14px;}
+  .task .actions input[ id^="cur_"]{max-width:112px!important;}
+  .task .actions input[ id^="mins_"]{max-width:128px!important;}
+  .task .actions>div:first-child{margin-bottom:0!important;}
+}
+@media(max-width:680px){
+  .task .actions{gap:6px;}
+  .task .actions button{padding:8px 10px;font-size:13px;}
+  .task .actions input{max-width:100%!important;}
+}
 </style>
 
 </body></html>
