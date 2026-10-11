@@ -113,6 +113,42 @@
 .deadline-field .time-presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.deadline-field .time-presets button{font-size:11px;padding:7px 9px;background:#e8e8e5;color:#555650;border:1px solid #dededb}.deadline-field .hint{margin-top:6px}.deadline-field .hint strong{color:var(--ink)}@media(max-width:520px){.deadline-field .time-presets button{flex:1 1 auto}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style id="mobile-layout-fix-20261012">
+/* 모바일: 계정 정보가 버튼 사이에 끼어 한 글자씩 줄바꿈되지 않도록 재배치 */
+@media (max-width: 600px) {
+  .account-strip {
+    display: flex !important; flex-wrap: wrap !important; justify-content: flex-start !important;
+    align-items: center !important; gap: 8px !important; width: 100% !important;
+  }
+  #accountEmail, #syncStatus {
+    display: block !important; flex: 1 1 100% !important; width: 100% !important;
+    min-width: 0 !important; overflow-wrap: anywhere !important; word-break: normal !important;
+  }
+  .account-strip button { flex: 0 1 auto !important; max-width: 100% !important; }
+  /* 말풍선은 남은 너비만 사용하고, 글씨는 말풍선 안에서 줄바꿈 */
+  .guide-welcome {
+    display: flex !important; flex-direction: row !important; align-items: stretch !important;
+    justify-content: center !important; gap: 7px !important; padding: 10px 8px 0 !important;
+    box-sizing: border-box !important; min-width: 0 !important; overflow: hidden !important;
+  }
+  .guide-welcome-copy {
+    box-sizing: border-box !important; flex: 1 1 0% !important; width: 0 !important;
+    min-width: 0 !important; max-width: calc(100% - 101px) !important;
+    padding: 12px !important; margin: 0 0 12px !important;
+    overflow-wrap: break-word !important; word-break: normal !important;
+  }
+  .guide-welcome-copy .guide-intro {
+    display: block !important; width: 100% !important; max-width: 100% !important;
+    box-sizing: border-box !important; font-size: 12px !important; line-height: 1.7 !important;
+    white-space: normal !important; overflow-wrap: anywhere !important; word-break: keep-all !important;
+  }
+  .guide-welcome-copy::after { right: -8px !important; top: 72% !important; width: 11px !important; height: 19px !important;
+    border: 0 !important; background: #fff !important; clip-path: polygon(0 0, 100% 82%, 0 100%) !important; }
+  .guide-mascot { flex: 0 0 94px !important; width: 94px !important; height: auto !important;
+    max-height: 118px !important; object-fit: contain !important; object-position: center bottom !important; }
+}
+</style>
 </head><body>
 <section id="authGate"><div class="auth-card"><h1>🗂️ 김비서의 오늘 브리핑</h1><p class="auth-sub">로그인하시면 작업과 기록을 클라우드에 저장해<br>PC와 모바일에서 이어서 사용할 수 있어요.</p>
 <form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"><label for="authPassword">비밀번호</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="6자 이상"><div class="auth-actions"><button type="submit" class="primary" id="loginBtn">로그인</button><button type="button" id="signupBtn">회원가입</button></div><button type="button" id="forgotPasswordBtn" style="margin-top:10px;width:100%;background:transparent;text-decoration:underline;color:var(--muted)">비밀번호를 잊으셨나요?</button></form><form id="passwordUpdateForm" style="display:none"><label for="newPassword">새 비밀번호</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="새 비밀번호 6자 이상"><label for="newPasswordConfirm">새 비밀번호 확인</label><input id="newPasswordConfirm" type="password" autocomplete="new-password" minlength="6" required placeholder="새 비밀번호 다시 입력"><button type="submit" class="primary" style="width:100%;margin-top:14px">비밀번호 변경</button></form>
@@ -1664,11 +1700,56 @@ h2::before, .section-title::before, .panel-title::before, .card-section-title::b
   vertical-align:bottom !important;
 }
 @media(max-width:600px){
-  .guide-welcome{gap:7px !important;padding:10px 8px 0 !important;min-height:120px !important;}
-  .guide-welcome-copy{flex:1 1 auto !important;width:auto !important;padding:12px !important;margin:0 0 12px !important;border-radius:16px !important;}
-  .guide-welcome-copy::after{right:-8px !important;top:72% !important;width:11px !important;height:19px !important;border:0 !important;background:#fff !important;clip-path:polygon(0 0, 100% 82%, 0 100%) !important;}
-  .guide-welcome-copy .guide-intro{font-size:12px !important;line-height:1.7 !important;}
-  .guide-mascot{flex:0 0 94px !important;width:94px !important;height:auto !important;max-height:118px !important;}
+  .guide-welcome{
+    gap:8px !important;
+    padding:10px 8px 0 !important;
+    min-height:0 !important;
+    align-items:flex-end !important;
+  }
+  .guide-welcome-copy{
+    position:relative !important;
+    box-sizing:border-box !important;
+    flex:1 1 0 !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    align-self:flex-end !important;
+    margin:0 0 12px !important;
+    padding:12px 11px !important;
+    border-radius:16px !important;
+    overflow:visible !important;
+  }
+  .guide-welcome-copy .guide-intro{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:clamp(11px, 3.2vw, 13px) !important;
+    line-height:1.55 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+  .guide-welcome-copy::after{
+    right:-8px !important;
+    top:72% !important;
+    width:11px !important;
+    height:19px !important;
+    border:0 !important;
+    background:#fff !important;
+    clip-path:polygon(0 0, 100% 82%, 0 100%) !important;
+  }
+  .guide-mascot{
+    flex:0 0 clamp(78px, 24vw, 94px) !important;
+    width:clamp(78px, 24vw, 94px) !important;
+    height:auto !important;
+    max-height:118px !important;
+    object-fit:contain !important;
+    object-position:center bottom !important;
+  }
 }
 
 </style>
@@ -1851,4 +1932,148 @@ function confirmBackupImport(){
   }
 }
 </style>
+
+<style id="mobile-bubble-overflow-root-fix">
+/* 실제 원인 수정: 모바일 flex 행에서 말풍선이 캐릭터 높이에 맞춰 늘어나지 못하는 문제 */
+@media (max-width: 600px) {
+  .guide-welcome {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 10px 8px 0 !important;
+    overflow: visible !important;
+  }
+  .guide-welcome-copy {
+    box-sizing: border-box !important;
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-self: flex-start !important;
+    margin: 0 0 12px !important;
+    padding: 12px !important;
+    overflow: visible !important;
+    white-space: normal !important;
+  }
+  .guide-welcome-copy .guide-intro {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    font-size: 12px !important;
+    line-height: 1.65 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+  }
+  .guide-welcome-copy::after {
+    right: -8px !important;
+    top: 72% !important;
+  }
+  .guide-mascot {
+    flex: 0 0 94px !important;
+    width: 94px !important;
+    height: auto !important;
+    max-height: 118px !important;
+    align-self: flex-end !important;
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}
+</style>
+
+<style id="stats-bubble-mobile-height-fix">
+/* Fix the actual stats-page bubble: the fixed image ratio was keeping it too short for four lines. */
+@media (max-width: 680px) {
+  .stats-secretary-floor {
+    height: auto !important;
+    min-height: 205px !important;
+    display: flow-root !important;
+    position: relative !important;
+    padding-bottom: 0 !important;
+  }
+  .stats-secretary-bubble {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 136px !important;
+    aspect-ratio: auto !important;
+    padding: 14px 10px 12px clamp(24px, 12.5vw, 44px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.4 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    overflow: visible !important;
+    background-size: 100% 100% !important;
+  }
+  .stats-secretary-floor img {
+    position: absolute !important;
+    left: 18px !important;
+    bottom: 0 !important;
+  }
+}
+</style>
+
+
+<style id="stats-bubble-responsive-final-override">
+/* Mobile stats speech bubble: let text determine height and stretch the supplied bubble artwork with it. */
+@media (max-width: 680px) {
+  .stats-secretary-floor {
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: calc(100% + 36px) !important;
+    height: auto !important;
+    min-height: 220px !important;
+    margin-top: 12px !important;
+    margin-left: -18px !important;
+    margin-right: -18px !important;
+    margin-bottom: -18px !important;
+    padding: 0 8px 0 0 !important;
+    overflow: visible !important;
+  }
+  .stats-secretary-floor img {
+    position: absolute !important;
+    left: 18px !important;
+    bottom: 0 !important;
+    height: 155px !important;
+    width: auto !important;
+    max-width: 38% !important;
+    object-fit: contain !important;
+    object-position: bottom left !important;
+  }
+  .stats-secretary-bubble {
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: calc(100% - 135px) !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    margin: 12px 0 0 125px !important;
+    padding: 12px 10px 12px 28px !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+  }
+}
+</style>
+
 </body></html>
