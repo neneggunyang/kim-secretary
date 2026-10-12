@@ -148,7 +148,90 @@
   .guide-mascot { flex: 0 0 94px !important; width: 94px !important; height: auto !important;
     max-height: 118px !important; object-fit: contain !important; object-position: center bottom !important; }
 }
+#statsSummary .statgrid{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:700px){#statsSummary .statgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<style id="weekly-stats-and-compact-actions-fix">
+.weekly-goal-panel{background:#f8f8f5!important;border-color:#d9e2d9!important;padding:15px!important}
+.weekly-goal-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.weekly-goal-heading h3{margin:0 0 5px;font-size:15px}
+.weekly-goal-total{font-size:25px;white-space:nowrap;color:#56735e}
+.weekly-goal-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.weekly-goal-row small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+@media(min-width:681px){
+ .task .actions{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;align-items:center!important;min-width:0}
+ .task .actions input[id^="cur_"]{width:88px!important;max-width:88px!important;min-width:70px!important}
+ .task .actions input[id^="mins_"]{width:112px!important;max-width:112px!important;min-width:85px!important}
+ .task .actions button{padding:7px 7px!important;font-size:12px!important;letter-spacing:-.55px!important;white-space:nowrap!important;flex:0 1 auto!important;min-width:0!important}
+ .task .actions>div:first-child{flex:0 0 100%!important}
+}
+@media(max-width:680px){
+ .weekly-goal-heading h3{font-size:14px}
+ .weekly-goal-total{font-size:22px}
+ .task .actions{gap:5px!important}
+ .task .actions button{padding:7px 8px!important;font-size:12px!important}
+}
+.weekly-trend-chart{margin-top:14px;display:grid;gap:13px}
+.weekly-trend-item{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0}
+.weekly-trend-item-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.weekly-trend-item-head strong{font-size:13px;overflow-wrap:anywhere}
+.weekly-trend-item-head span{font-size:12px;color:#56735e;font-weight:800;white-space:nowrap}
+.weekly-trend-bar{height:10px;border-radius:99px;background:#e8e9e5;overflow:hidden}
+.weekly-trend-bar>span{display:block;height:100%;border-radius:99px;background:#91ad96}
+.weekly-trend-weeks{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:11px}
+.weekly-trend-week{min-width:0;text-align:center}
+.weekly-trend-dot{height:10px;border-radius:4px;background:#e6e7e2;margin-bottom:5px}
+.weekly-trend-dot.met{background:#789c80}
+.weekly-trend-week small{font-size:9px;color:var(--muted);white-space:nowrap}
+.weekly-trend-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px}
+.weekly-trend-legend span{display:inline-flex;align-items:center;gap:5px}
+.weekly-trend-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;background:#789c80}
+.weekly-trend-legend .empty i{background:#e6e7e2}
+@media(max-width:480px){.weekly-trend-item{padding:10px}.weekly-trend-weeks{gap:3px}.weekly-trend-week small{font-size:8px}.weekly-trend-item-head strong{font-size:12px}}
+</style>
+
+<style id="task-actions-no-overflow-fix">
+/* 작업 카드 안에서 조작부가 카드 밖으로 밀려나지 않도록 덮어쓰기 */
+.task .actions{
+  display:flex !important; flex-flow:row wrap !important; align-items:center !important;
+  gap:6px !important; width:100% !important; max-width:100% !important;
+  min-width:0 !important; box-sizing:border-box !important; overflow:visible;
+}
+.task .actions>div:first-child{flex:0 0 100% !important; width:100% !important; min-width:0 !important;}
+.task .actions input[id^="cur_"]{flex:0 1 88px !important; width:88px !important; max-width:100% !important; min-width:58px !important; box-sizing:border-box !important;}
+.task .actions input[id^="mins_"]{flex:0 1 112px !important; width:112px !important; max-width:100% !important; min-width:75px !important; box-sizing:border-box !important;}
+.task .actions button{flex:0 1 auto !important; min-width:0 !important; max-width:100% !important; padding:7px 8px !important; font-size:12px !important; letter-spacing:-.35px !important; white-space:normal !important; overflow-wrap:anywhere; box-sizing:border-box !important;}
+@media(max-width:680px){
+  .task .actions{gap:5px !important;}
+  .task .actions input[id^="cur_"]{flex-basis:76px !important; width:76px !important;}
+  .task .actions input[id^="mins_"]{flex-basis:100px !important; width:100px !important;}
+  .task .actions button{padding:7px 8px !important; font-size:12px !important;}
+}
+</style>
+
+
+<style id="task-action-grouping-update">
+/* 주간 휴식은 보조 동작으로 낮춰 보이고, 관리 버튼은 별도 그룹으로 구분 */
+.task .actions .btn-skip-weekly{
+  background:#f0f1ee !important;
+  color:#a5a89f !important;
+  border:1px solid #e8e9e5 !important;
+  box-shadow:none !important;
+}
+.task .actions .task-secondary-actions{
+  display:flex !important;
+  flex-flow:row wrap !important;
+  align-items:center !important;
+  gap:6px !important;
+  margin-left:12px !important;
+  min-width:0 !important;
+  max-width:100% !important;
+}
+.task .actions .task-secondary-actions button{flex:0 1 auto !important;}
+@media(max-width:680px){
+  .task .actions .task-secondary-actions{margin-left:8px !important;gap:5px !important;}
+}
+</style>
+
 </head><body>
 <section id="authGate"><div class="auth-card"><h1>🗂️ 김비서의 오늘 브리핑</h1><p class="auth-sub">로그인하시면 작업과 기록을 클라우드에 저장해<br>PC와 모바일에서 이어서 사용할 수 있어요.</p>
 <form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"><label for="authPassword">비밀번호</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="6자 이상"><div class="auth-actions"><button type="submit" class="primary" id="loginBtn">로그인</button><button type="button" id="signupBtn">회원가입</button></div><button type="button" id="forgotPasswordBtn" style="margin-top:10px;width:100%;background:transparent;text-decoration:underline;color:var(--muted)">비밀번호를 잊으셨나요?</button></form><form id="passwordUpdateForm" style="display:none"><label for="newPassword">새 비밀번호</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="새 비밀번호 6자 이상"><label for="newPasswordConfirm">새 비밀번호 확인</label><input id="newPasswordConfirm" type="password" autocomplete="new-password" minlength="6" required placeholder="새 비밀번호 다시 입력"><button type="submit" class="primary" style="width:100%;margin-top:14px">비밀번호 변경</button></form>
@@ -196,7 +279,7 @@
 <section class="card history-card"><details id="historyDetails"><summary class="history-summary"><span>🗂️ 완료 기록 보관</span><span class="history-toggle-hint">접기 / 펼치기</span></summary><div class="hint">아가씨께서 종료하신 반복 작업이나 대시보드에서 삭제한 작업도 과거 기록은 그대로 보관됩니다.</div><div id="historyList" class="history-scroll"></div></details></section>
 </div>
 <div id="panelStats" class="panel">
-<section class="card"><h2>📈 지금까지의 달성 통계</h2><div id="statsSummary"></div><div id="statsList" style="margin-top:14px"></div></section>
+<section class="card"><h2>📈 지금까지의 달성 통계</h2><div id="statsSummary"></div><div id="weeklyGoalStats" style="margin-top:12px"></div><div id="statsList" style="margin-top:14px"></div></section>
 </div>
 </div><div class="toast" id="toast"></div><div class="party-rain" id="partyRain" aria-hidden="true"></div><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle"><div class="modalbox"><div class="confetti">🎉 👏 🎊 👏 🎉</div><h2 id="celebrationTitle">아가씨, 금일 업무를 모두 마치셨습니다!</h2><p>오늘 예정된 업무를 전부 처리하셨습니다.<br><strong>달성률 100%.</strong><br>이제 마음 편히 쉬셔도 됩니다.</p><div style="font-size:26px;letter-spacing:5px;margin:12px 0" aria-label="축하합니다">👏👏👏👏👏</div><button class="primary" onclick="closeModal()">김비서, 아가씨의 오늘 업무를 모두 보좌했습니다. 이제 물러나겠습니다. 🫡</button></div></div>
 <script>
@@ -302,6 +385,30 @@ function formatDeadlineInput(input){const digits=String(input.value||"").replace
 function normalize24HourTime(value){const raw=String(value||"").trim();const m=raw.match(/^(\d{1,2}):(\d{2})$/);if(!m)return null;const h=Number(m[1]),min=Number(m[2]);if(h<0||h>23||min<0||min>59)return null;return String(h).padStart(2,"0")+":"+String(min).padStart(2,"0");}
 function setDeadlineAfter(id,minutes){const d=new Date(Date.now()+minutes*60000);$(id).value=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
 function setDeadlineEndOfDay(id){$(id).value="23:59";}
+function recordWeeklyGoalIfMet(t){
+  if(!t||t.repeat!=="weekly")return;
+  const goal=Math.max(1,Number(t.weeklyTarget)||1),week=currentWeekKey();
+  const days=[...new Set(Array.isArray(t.weeklyDays)?t.weeklyDays:[])].filter(day=>currentWeekKey(day)===week).length;
+  t.weeklyCurrent=days;
+  if(days<goal)return;
+  const exists=history.some(h=>h&&h.recordType==="weekly-goal"&&String(h.taskId)===String(t.id)&&h.weekKey===week);
+  if(!exists)history.push({id:"weekly-goal-"+String(t.id)+"-"+week,recordType:"weekly-goal",taskId:t.id,date:today(),weekKey:week,name:t.name,area:t.area,weeklyTarget:goal,weeklyCount:days});
+}
+function skipWeeklyToday(id){
+  const t=tasks.find(x=>String(x.id)===String(id));if(!t||t.repeat!=="weekly"||t.done)return;
+  const d=today();t.weeklySkippedDays=Array.isArray(t.weeklySkippedDays)?t.weeklySkippedDays:[];
+  if(!t.weeklySkippedDays.includes(d))t.weeklySkippedDays.push(d);
+  t.current=0;t.lastProgressDate=d;
+  history=history.filter(h=>!(String(h.taskId)===String(t.id)&&h.date===d));
+  history.push({id:"skip-"+String(t.id)+"-"+d,taskId:t.id,date:d,name:t.name,area:t.area,target:t.target,current:0,unit:normalizeUnit(t.unit),completedAt:"",skipped:true,recordType:"skip"});
+  save();render();renderStats();toast("오늘은 쉬는 날로 기록했습니다, 아가씨. 달성 실패로 계산하지 않겠습니다.");
+}
+function restoreWeeklyToday(id){
+  const t=tasks.find(x=>String(x.id)===String(id));if(!t||t.repeat!=="weekly")return;
+  const d=today();t.weeklySkippedDays=(Array.isArray(t.weeklySkippedDays)?t.weeklySkippedDays:[]).filter(day=>day!==d);
+  history=history.filter(h=>!(String(h.taskId)===String(t.id)&&h.date===d&&h.skipped));
+  t.current=0;t.done=false;t.lastProgressDate=d;save();render();renderStats();toast("오늘 업무를 다시 대시보드에 표시했습니다, 아가씨.");
+}
 function addTask(){
   const name=$("name").value.trim();
   const target=Number($("target").value);
@@ -312,7 +419,7 @@ function addTask(){
   const endDate=$("endDate").value;
   const weeklyTarget=repeat==="weekly"?Number($("weeklyTarget").value):0;
   if(repeat==="weekly" && !(weeklyTarget>0)){toast("주간 목표량을 입력해 주세요, 아가씨.");return;}
-  const estimatedMinutes=normalizeUnit(unit)==="시간"?null:(Number($("estimatedMinutes").value)||0);const difficulty=$("difficulty").value||"normal";const task={id:Date.now(),name,area:$("area").value,target,current:0,unit,minutes:0,estimatedMinutes,difficulty,deadline,repeat,endDate,weeklyTarget,weeklyCurrent:0,weeklyDays:[],weekKey:currentWeekKey(),startDate:today(),lastProgressDate:today(),done:false};
+  const estimatedMinutes=normalizeUnit(unit)==="시간"?null:(Number($("estimatedMinutes").value)||0);const difficulty=$("difficulty").value||"normal";const task={id:Date.now(),name,area:$("area").value,target,current:0,unit,minutes:0,estimatedMinutes,difficulty,deadline,repeat,endDate,weeklyTarget,weeklyCurrent:0,weeklyDays:[],weeklySkippedDays:[],weekKey:currentWeekKey(),startDate:today(),lastProgressDate:today(),done:false};
   tasks.push(task);save();
   $("name").value="";$("target").value="";$("endDate").value="";$("estimatedMinutes").value="";$("difficulty").value="normal";
   render();toast("아가씨, 작업을 등록했습니다. 김비서가 확인해 두었습니다.");
@@ -357,7 +464,7 @@ function complete(id){
     history:history.filter(h=>String(h.taskId)===String(t.id)&&h.date===d).map(h=>({...h}))
   };
   if(t.repeat==="weekly"){t.current=targetBase(t);t.lastProgressDate=d;t.weeklyDays=Array.isArray(t.weeklyDays)?t.weeklyDays:[];if(!t.weeklyDays.includes(d))t.weeklyDays.push(d);t.weeklyCurrent=[...new Set(t.weeklyDays)].filter(day=>currentWeekKey(day)===currentWeekKey()).length;t.done=true;}else{t.current=targetBase(t);t.done=true;}
-  recordToday(t);save();render();renderStats();
+  recordToday(t);recordWeeklyGoalIfMet(t);save();render();renderStats();
   if(tasks.length&&todayTasks().every(x=>x.done)) openCelebration();
   else toast("👏 훌륭하십니다, 아가씨! 업무 하나를 완료로 기록했습니다.");
 }
@@ -377,16 +484,17 @@ function rolloverDailyTasks(){
       const previousDate=t.lastProgressDate;
       const existing=history.find(h=>String(h.taskId)===String(t.id)&&h.date===previousDate);
       const snapshot={id:existing?.id||("auto-daily-"+String(t.id)+"-"+previousDate),taskId:t.id,date:previousDate,name:t.name,area:t.area,target:t.target,current:Number(t.current)||0,unit:normalizeUnit(t.unit),completedAt:t.done?(existing?.completedAt||""):"",autoSnapshot:true};
-      if(existing) Object.assign(existing,snapshot); else history.push(snapshot);
+      if(existing?.skipped){Object.assign(existing,{name:t.name,area:t.area,target:t.target,current:0,unit:normalizeUnit(t.unit),completedAt:"",autoSnapshot:true,skipped:true,recordType:"skip"});}else if(existing) Object.assign(existing,snapshot); else history.push(snapshot);
       changed=true;
     }
     if(t.repeat==="daily" && (!t.startDate||d>=t.startDate) && t.lastProgressDate!==d){
       t.current=0;t.done=false;t.lastProgressDate=d;changed=true;
     }
     if(t.repeat==="weekly"){
-      if(t.weekKey!==wk){t.weeklyDays=[];t.weeklyCurrent=0;t.weekKey=wk;changed=true;}
+      if(t.weekKey!==wk){t.weeklyDays=[];t.weeklySkippedDays=[];t.weeklyCurrent=0;t.weekKey=wk;changed=true;}
       if(t.lastProgressDate!==d){t.current=0;t.done=false;t.lastProgressDate=d;changed=true;}
       t.weeklyDays=Array.isArray(t.weeklyDays)?t.weeklyDays:[];
+      t.weeklySkippedDays=Array.isArray(t.weeklySkippedDays)?t.weeklySkippedDays:[];
       t.weeklyCurrent=[...new Set(t.weeklyDays)].filter(day=>currentWeekKey(day)===wk).length;
     }
   });
@@ -395,7 +503,7 @@ function rolloverDailyTasks(){
 function todayTasks(){
   rolloverDailyTasks();
   const d=today();
-  return tasks.filter(t=>(t.repeat==="once" || !t.endDate || d<=t.endDate) && (!t.startDate || d>=t.startDate));
+  return tasks.filter(t=>(t.repeat==="once" || !t.endDate || d<=t.endDate) && (!t.startDate || d>=t.startDate) && !(t.repeat==="weekly" && Array.isArray(t.weeklySkippedDays) && t.weeklySkippedDays.includes(d)));
 }
 function activeTasks(){return todayTasks().filter(t=>!t.done)}
 function addWorkTime(id){
@@ -429,7 +537,7 @@ function updateCurrent(id){
     t.weeklyCurrent=[...new Set(t.weeklyDays)].filter(day=>currentWeekKey(day)===currentWeekKey()).length;
     t.done=t.current>=max; // 하루 목표 달성 시 오늘은 비활성화, 주간 횟수는 서로 다른 날짜만 집계
   } else {t.done=t.current>=max;}
-  recordToday(t);save();render();
+  recordToday(t);recordWeeklyGoalIfMet(t);save();render();renderStats();
   if(t.done){if(t.repeat==="weekly"){const goal=Number(t.weeklyTarget)||1;if(t.weeklyCurrent>=goal)toast("👏 아가씨, 이번 주 목표 횟수를 모두 달성하셨습니다!");else toast("👏 오늘 몫을 달성했습니다! 이번 주 "+t.weeklyCurrent+" / "+goal+"일 완료했습니다.");}else if(tasks.length&&todayTasks().every(x=>x.done))openCelebration();else toast("👏 아가씨, 목표량을 모두 채우셨습니다. 훌륭하십니다!");}
   else toast("📌 아가씨의 실적을 반영했습니다. 남은 작업량을 다시 계산해 두었습니다.");
 }
@@ -611,7 +719,9 @@ function savePastRecord(){
   $("pastCurrent").value="";$("pastCompletedAt").value="";render();renderStats();toast("아가씨, 지난 작업 기록을 저장했습니다.");
 }
 function renderStats(){
-  const valid=history.filter(h=>h && h.date);
+  const valid=history.filter(h=>h && h.date && !h.skipped && h.recordType!=="weekly-goal");
+  const weeklyGoalRecords=history.filter(h=>h&&h.recordType==="weekly-goal"&&h.weekKey);
+  const weeklyGoalWeeks=new Set(weeklyGoalRecords.map(h=>String(h.taskId)+"|"+h.weekKey)).size;
   // 주간 반복 업무의 일부 과거 기록에는 주간 총목표가 일일 목표로 저장된 경우가 있다.
   // 통계에서는 해당 작업의 현재 설정에서 일일 목표량을 가져와 기존 기록도 올바르게 계산한다.
   function statsMetric(h){
@@ -632,6 +742,12 @@ function renderStats(){
     '<div class="goalstat"><div class="mini">기록된 작업일</div><strong style="font-size:22px">'+days+'일</strong></div>'+
     '<div class="goalstat"><div class="mini">목표 달성 성공</div><strong style="font-size:22px">'+success+'회</strong></div>'+
     '<div class="goalstat"><div class="mini">평균 달성률</div><strong style="font-size:22px">'+avg+'%</strong></div></div>';
+  const weeklyByTask={};
+  weeklyGoalRecords.forEach(r=>{const key=String(r.taskId);if(!weeklyByTask[key])weeklyByTask[key]={name:r.name||((tasks.find(t=>String(t.id)===key)||{}).name)||'주간 반복 업무',count:0,lastWeek:'',weeks:new Set(),target:Number(r.weeklyTarget)||Number((tasks.find(t=>String(t.id)===key)||{}).weeklyTarget)||1};weeklyByTask[key].count++;weeklyByTask[key].weeks.add(String(r.weekKey));if(String(r.weekKey)>weeklyByTask[key].lastWeek)weeklyByTask[key].lastWeek=String(r.weekKey);});
+  const recentWeekKeys=[];let weekCursor=today();for(let i=0;i<7;i++){recentWeekKeys.unshift(currentWeekKey(weekCursor));const d=new Date(weekCursor+'T12:00:00');d.setDate(d.getDate()-7);weekCursor=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  const shortWeek=k=>{const d=new Date(k+'T12:00:00');return (d.getMonth()+1)+'/'+d.getDate();};
+  const weeklyChartRows=Object.entries(weeklyByTask).sort((a,b)=>b[1].count-a[1].count).map(([key,r])=>{const pct=weeklyGoalRecords.length?Math.round(r.count/Math.max(1,...Object.values(weeklyByTask).map(x=>x.count))*100):0;const cells=recentWeekKeys.map(w=>'<div class="weekly-trend-week"><div class="weekly-trend-dot'+(r.weeks.has(w)?' met':'')+'" title="'+esc(w)+' · '+(r.weeks.has(w)?'주간 목표 달성':'달성 기록 없음')+'"></div><small>'+shortWeek(w)+'</small></div>').join('');return '<article class="weekly-trend-item"><div class="weekly-trend-item-head"><strong>'+esc(r.name)+'</strong><span>'+r.count+'주 달성</span></div><div class="weekly-trend-bar" role="img" aria-label="'+esc(r.name)+' 주간 목표 달성 주 수 '+r.count+'주"><span style="width:'+pct+'%"></span></div><div class="mini" style="margin-top:6px">최근 달성: '+esc(r.lastWeek||'기록 없음')+' · 목표 '+r.target+'회/주</div><div class="weekly-trend-weeks">'+cells+'</div></article>';}).join('');
+  $("weeklyGoalStats").innerHTML='<section class="goalstat weekly-goal-panel"><div class="weekly-goal-heading"><div><h3>🗓️ 주간 목표 달성 통계</h3><div class="mini">아가씨, 주간 목표를 채우신 기록을 업무별로 모아 보았습니다. 오늘 쉬기로 하신 날은 실패로 계산하지 않습니다.</div></div><strong class="weekly-goal-total">'+weeklyGoalRecords.length+'회</strong></div>'+(weeklyChartRows?'<div class="mini" style="margin-top:12px">막대는 업무별 누적 달성 주 수를, 아래 표시는 최근 7주 중 목표 달성 기록이 있는 주를 나타냅니다.</div><div class="weekly-trend-chart">'+weeklyChartRows+'</div><div class="weekly-trend-legend mini"><span><i></i>주간 목표 달성 기록 있음</span><span class="empty"><i></i>달성 기록 없음</span></div>':'<div class="mini" style="margin-top:10px">아직 주간 목표를 달성한 기록이 없습니다. 주간 목표 횟수를 채우시면 이곳에 업무별 달성 추이가 쌓입니다.</div>')+'</section>';
   // 최근 7일과 직전 7일을 기록이 존재하는 작업 기록 기준으로 비교합니다.
   // 기록이 없는 날짜는 0%로 간주하지 않으며, 각 기간 3건 이상일 때만 변화율을 표시합니다.
   const todayDate=new Date(today()+"T12:00:00");
@@ -721,12 +837,16 @@ function render(){
     +'<div class="detail">'+(t.done?(t.repeat==="weekly"?'✓ 오늘치 목표 달성 · ':'✓ 오늘 목표 완료 · '):'')+(t.repeat==="weekly"?'주간 목표 '+esc((t.weeklyTarget||1)+ '일')+' · 달성 '+esc(String(t.weeklyCurrent||0))+'일 · 주간 달성률 '+ach+'%':'목표 '+esc(displayTarget(t))+' · 현재 '+esc(displayCurrent(t))+' · 잔여 '+esc(displayRemaining(t))+' · 달성률 '+ach+'%')+' · '+period+'</div>'
     +((isTimeUnit(t)||Number(t.estimatedMinutes)>0||t.difficulty)?'<div class="detail">'+(isTimeUnit(t)?'남은 목표 시간 '+formatDurationMinutes(estimatedRemainingMinutes(t)):(Number(t.estimatedMinutes)>0?'남은 예상 소요시간 '+formatDurationMinutes(estimatedRemainingMinutes(t)):'예상 소요시간 미입력'))+( !isTimeUnit(t)&&Number(t.actualMinutes)>0?' · 실제 누적 '+formatDurationMinutes(t.actualMinutes):'')+' · 난이도 '+({easy:'쉬움',normal:'보통',hard:'어려움'}[t.difficulty||'normal'])+'</div>':'')+deadlineCountdown(t)+'<div class="actions"><div style="width:100%;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:2px">'+inputHint+'</div>'+input
     +(u==="완료"?'<button class="primary" onclick="complete('+t.id+')" '+(t.done?'disabled':'')+'>'+(t.done?'✓ 완료됨':'완료 처리')+'</button>':'<button class="primary" onclick="updateCurrent('+t.id+')" '+(t.done?'disabled':'')+'>작업량 반영</button>')
-    +'<button onclick="'+(t.done?'undoComplete':'complete')+'('+t.id+')">'+(t.done?'↶ 완료 취소':'✓ 완료')+'</button><button onclick="editTask('+t.id+')">수정</button><button onclick="toggleTaskFix('+t.id+')">'+(t.fixed?'🔓 픽스 해제':'📌 업무 픽스')+'</button><button class="danger" onclick="delTask('+t.id+')">삭제</button></div>'
+    +'<button onclick="'+(t.done?'undoComplete':'complete')+'('+t.id+')">'+(t.done?'↶ 완료 취소':'✓ 완료')+'</button>'+(t.repeat==='weekly'&&!t.done?'<button class="btn-skip-weekly" onclick="skipWeeklyToday('+t.id+')">💤 오늘은 안 하기</button>':'')+'<div class="task-secondary-actions"><button class="btn-edit-task" onclick="editTask('+t.id+')">수정</button><button class="btn-fix-task" onclick="toggleTaskFix('+t.id+')">'+(t.fixed?'🔓 픽스 해제':'📌 업무 픽스')+'</button><button class="danger btn-delete-task" onclick="delTask('+t.id+')">삭제</button></div></div>'
     +'<details class="cert-menu"><summary>인증 관리 <span class="cert-status">'+(t.certRequired?(t.certified?'✓ 인증 완료':'인증 필요'):'선택 사항')+'</span></summary>'
     +'<div class="cert-options"><label><input type="checkbox" '+(t.certRequired?'checked':'')+' onchange="setCertification('+t.id+', &quot;required&quot;, this.checked)"> 인증이 필요한 작업</label>'
     +(t.certRequired?'<label><input type="checkbox" '+(t.certified?'checked':'')+' onchange="setCertification('+t.id+', &quot;done&quot;, this.checked)"> 인증 완료</label>':'')
     +'</div></details></div></div></div>'
   }).join("");
+  const skippedToday=tasks.filter(t=>t.repeat==="weekly"&&Array.isArray(t.weeklySkippedDays)&&t.weeklySkippedDays.includes(today()));
+  if(skippedToday.length){
+    $("tasks").innerHTML+='<section class="goalstat" style="margin-top:12px;background:#f4f4f1"><h3>🌿 오늘은 쉬기로 하신 주간 업무</h3><div class="mini" style="margin-bottom:8px">오늘 쉬기로 하신 업무는 달성 실패로 계산하지 않습니다. 다시 진행하고 싶으시면 언제든 대시보드에 올리실 수 있습니다.</div>'+skippedToday.map(t=>'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)"><span>'+esc(t.name)+'</span><button onclick="restoreWeeklyToday('+t.id+')">오늘 업무로 되돌리기</button></div>').join('')+'</section>';
+  }
 }
 function toast(s){const e=$("toast");e.textContent=s;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
 function closeModal(){clearTimeout(partyTimer);$("partyRain").innerHTML="";$("modal").classList.remove("open")}
